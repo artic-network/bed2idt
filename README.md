@@ -29,23 +29,14 @@ The CLI supports the following options:
 
 1.  Generate 96-well plate IDT input files for a primer bed file named `primers.bed` and save/overide the output as `output.xlsx`, split by pools:
 
-```{=html}
-<!-- -->
-```
     python bed2idt/main.py -b primers.bed --force plate --splitby pools
 
 2.  Generate tube IDT input files for a primer bed file named `primers.bed`, save the output as `custom_output.xlsx`, and specify a purification method:
 
-```{=html}
-<!-- -->
-```
     python bed2idt/main.py -b primers.bed -o custom_output.xlsx tube --purification PAGE
 
 3.  Generate IDT input files for a primer bed file named `primers.bed` without splitting the primers across multiple plates:
 
-```{=html}
-<!-- -->
-```
     python bed2idt/main.py -b primers.bed plate --splitby none
 
 Note: Make sure to replace `python` with the appropriate command for running Python on your system.
