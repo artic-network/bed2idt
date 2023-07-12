@@ -10,7 +10,9 @@ readme = "README.md"
 python = "^3.10"
 xlsxwriter = "^3.1.2"
 
-
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+bed2idt = 'bed2idt.main:main'
