@@ -1,4 +1,4 @@
-from cli import cli
+from bed2idt.cli import cli
 import pathlib
 import sys
 import xlsxwriter
@@ -44,6 +44,10 @@ def plate(primer_list, workbook, args):
         all_pools = list({int(x[4]) - 1 for x in primer_list})
         all_pools.sort()
 
+        # If only one pool complain
+        if len(all_pools) <= 1:
+            sys.exit("To few pools to split by. Please use -s none")
+
         # Ensure all pools are pos
         for pool in all_pools:
             if pool < 0:
@@ -64,10 +68,25 @@ def plate(primer_list, workbook, args):
         all_refs = {x[0] for x in primer_list}
         ref_dict = {x: i for i, x in enumerate(all_refs)}
 
+        # If only one pool complain
+        if len(all_refs) <= 1:
+            sys.exit("To few referances to split by. Please use -s none")
+
         plates = [[] for _ in all_refs]
         for primer in primer_list:
             plate = ref_dict[primer[0]]
             plates[plate].append(primer)
+
+    # Split primers by INNER or OUTER name
+    elif args.splitby == "nest":
+        plates = [[], []]
+        for primer in primer_list:
+            if "INNER" in primer[3].upper():
+                plates[0].append(primer)
+            elif "OUTER" in primer[3].upper():
+                plates[1].append(primer)
+            else:
+                sys.exit(f"Cannot find (INNER / OUTER) in {primer[3].upper()}")
 
     # make sure no pool are more than 96 primers
     plates = [chunks(x, 96) for x in plates]

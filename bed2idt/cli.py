@@ -26,7 +26,7 @@ def cli():
     plate_parser.add_argument(
         "-s",
         "--splitby",
-        choices=["pool", "ref", "none"],
+        choices=["pool", "ref", "none", "nest"],
         default="pool",
         help="Should the primers be split across more than one plate",
     )
