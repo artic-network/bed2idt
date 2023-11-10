@@ -1,10 +1,12 @@
 import argparse
 import pathlib
+from bed2idt.__init__ import __version__
 
 
 def cli():
     description = "Generates IDT input files from the 7 col primer.bed"
     parser = argparse.ArgumentParser(description=description)
+    parser.add_argument("--version", version=__version__, action="version")
     parser.add_argument(
         "-b",
         "--bedfile",
@@ -29,6 +31,13 @@ def cli():
         choices=["pool", "ref", "none", "nest"],
         default="pool",
         help="Should the primers be split across more than one plate",
+    )
+    plate_parser.add_argument(
+        "-f",
+        "--fillby",
+        choices=["rows", "cols"],
+        default="rows",
+        help="How should the plate be filled",
     )
     # Add the tube arguments
     tube_parser = subparsers.add_parser("tube")

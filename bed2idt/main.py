@@ -3,6 +3,8 @@ import pathlib
 import sys
 import xlsxwriter
 
+from bed2idt.__init__ import __version__
+
 """
 These are the correct values on the IDT website as of time of writing
 Please check https://eu.idtdna.com/site/order/oligoentry to confirm
@@ -15,12 +17,17 @@ def chunks(lst, n):
         yield lst[i : i + n]
 
 
-def create_plate(primer_list: list[list], workbook, sheet_name: str):
+def create_plate(primer_list: list[list], workbook, sheet_name: str, by_rows: bool):
     for index, primer_sublist in enumerate(primer_list):
         # Create all the indexes in a generator
         letters = ["A", "B", "C", "D", "E", "F", "G", "H"]
         numb = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-        indexes = ((letter, str(number)) for letter in letters for number in numb)
+
+        # Ensure the plate is filled up correctly
+        if by_rows:
+            indexes = ((letter, str(number)) for letter in letters for number in numb)
+        else:
+            indexes = ((letter, str(number)) for number in numb for letter in letters)
 
         # Create the sheet
         worksheet = workbook.add_worksheet(f"{sheet_name}.{index}")
@@ -93,7 +100,12 @@ def plate(primer_list, workbook, args):
 
     for index, plate in enumerate(plates):
         if plate:  # Plates can be empty so only write non-empty plates
-            create_plate(plate, workbook, sheet_name=f"plate_{index +1}")
+            create_plate(
+                plate,
+                workbook,
+                sheet_name=f"plate_{index +1}",
+                by_rows=args.fillby == "rows",
+            )
 
     workbook.close()
 
