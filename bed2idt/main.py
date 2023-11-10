@@ -3,8 +3,6 @@ import pathlib
 import sys
 import xlsxwriter
 
-from bed2idt.__init__ import __version__
-
 """
 These are the correct values on the IDT website as of time of writing
 Please check https://eu.idtdna.com/site/order/oligoentry to confirm

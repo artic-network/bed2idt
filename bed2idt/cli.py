@@ -39,6 +39,11 @@ def cli():
         default="rows",
         help="How should the plate be filled",
     )
+    plate_parser.add_argument(
+        "--force",
+        help="Override the output directory",
+        action="store_true",
+    )
     # Add the tube arguments
     tube_parser = subparsers.add_parser("tube")
     tube_parser.add_argument(
@@ -71,7 +76,7 @@ def cli():
         default="STD",
         choices=["STD", "PAGE", "HPLC", "IEHPLC", "RNASE", "DUALHPLC", "PAGEHPLC"],
     )
-    parser.add_argument(
+    tube_parser.add_argument(
         "--force",
         help="Override the output directory",
         action="store_true",
