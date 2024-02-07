@@ -32,7 +32,7 @@ The CLI supports the following options:
 -   `-b, --bedfile`: Path to the primer bed file (required).
 -   `-o, --output`: The output location for the generated IDT input file(s) (default: `output.xlsx`).
 -   `plate` command:
-    -   `-s, --splitby`: Specifies whether the primers should be split across more than one plate. Valid options are `pool`, `ref`, `none`, ~~`next`~~ (default: `pool`).
+    -   `-s, --splitby`: Specifies whether the primers should be split across more than one plate. Valid options are `pool`, `ref`, `none`, ~~`nest`~~ (default: `pool`).
     -   `-f, --fillby`: Specifies how the plates should be filled. Valid options are `rows` or `cols` (default: `rows`).
 -   `tube` command:
     -   `-s, --scale`: The concentration of the primers. Valid options are `25nm`, `100nm`, `250nm`, `1um`, `2um`, `5um`, `10um`, `4nmU`, `20nmU`, `PU`, or `25nmS` (default: `25nm`).
