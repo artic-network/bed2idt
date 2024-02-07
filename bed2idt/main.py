@@ -130,12 +130,27 @@ def tubes(primer_list, workbook, args):
     workbook.close()
 
 
-def read_bedfile(bed_path: pathlib.Path) -> list:
+def read_bedfile(bed_path: pathlib.Path) -> tuple[list, list]:
+    """
+    Read a BED file and return the header and primer list.
+
+    Args:
+        bed_path (pathlib.Path): The path to the BED file.
+
+    Returns:
+        tuple[list, list]: A tuple containing the header list and primer list.
+    """
     primer_list = []
+    header_list = []
     with open(bed_path, "r") as file:
         for line in file.readlines():
+            line = line.strip()
+            # Handle the header
+            if line.startswith("#"):
+                header_list.append(line)
+                continue
             primer_list.append(line.split())
-    return primer_list
+    return header_list, primer_list
 
 
 def main():
@@ -147,7 +162,7 @@ def main():
             f"Directory exists at {args.output.absolute()}, add --force to overwrite"
         )
     # Read in the primers
-    primer_list = read_bedfile(args.bedfile)
+    header, primer_list = read_bedfile(args.bedfile)
 
     # Create the workbook
     workbook = xlsxwriter.Workbook(args.output)
