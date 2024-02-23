@@ -94,14 +94,14 @@ def plate(primer_list, workbook, args):
                 sys.exit(f"Cannot find (INNER / OUTER) in {primer[3].upper()}")
 
     # make sure no pool are more than 96 primers
-    plates = [chunks(x, 96) for x in plates]
+    plates = [chunks(x, 96) for x in plates]  # type: ignore
 
     for index, plate in enumerate(plates):
         if plate:  # Plates can be empty so only write non-empty plates
             create_plate(
-                plate,
+                plate,  # type: ignore
                 workbook,
-                sheet_name=f"plate_{index +1}",
+                sheet_name=f"{args.plateprefix}_{index +1}",
                 by_rows=args.fillby == "rows",
             )
 
