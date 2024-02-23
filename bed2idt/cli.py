@@ -17,7 +17,7 @@ def cli():
     parser.add_argument(
         "-o",
         "--output",
-        help="The output location, please use the .xlsx extention",
+        help="The output location of the file. Defaults to output.xlsx",
         type=pathlib.Path,
         default=pathlib.Path("output.xlsx"),
     )
@@ -36,13 +36,16 @@ def cli():
         "-f",
         "--fillby",
         choices=["rows", "cols"],
-        default="rows",
+        default="cols",
         help="How should the plate be filled",
     )
     plate_parser.add_argument(
         "--force",
         help="Override the output directory",
         action="store_true",
+    )
+    plate_parser.add_argument(
+        "--plateprefix", help="The prefix for the plate names", default="plate"
     )
     # Add the tube arguments
     tube_parser = subparsers.add_parser("tube")
@@ -83,4 +86,9 @@ def cli():
     )
 
     args = parser.parse_args()
+
+    # Check if the output file contains the correct extension
+    if args.output.suffix != ".xlsx":
+        args.output = args.output.with_suffix(".xlsx")
+
     return args
