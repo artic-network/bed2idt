@@ -27,7 +27,7 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-bed2idt = 'bed2idt.main:main'
+bed2idt = 'bed2idt.main:app'
 
 [tool.ruff.lint]
 select = [
