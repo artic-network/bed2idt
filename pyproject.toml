@@ -28,3 +28,18 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 bed2idt = 'bed2idt.main:main'
+
+[tool.ruff.lint]
+select = [
+    # pycodestyle
+    "E",
+    # Pyflakes
+    "F",
+    # pyupgrade
+    "UP",
+    # flake8-bugbear
+    "B",
+    # isort
+    "I",
+]
+ignore = ["E501"] # Ignore line length
