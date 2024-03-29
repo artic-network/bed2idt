@@ -1,14 +1,11 @@
 import pathlib
-import xlsxwriter
-
 from random import shuffle
 
-
 import typer
+import xlsxwriter
 from typing_extensions import Annotated
 
 from bed2idt.config import PlateFillBy, PlateSplitBy, TubePurification, TubeScale
-
 
 # Create the typer app
 app = typer.Typer()
@@ -76,7 +73,7 @@ def plates_go(
                 raise typer.BadParameter("Please ensure all pools are 1-indexed")
 
         # If people do werid things with pools this should be pretty hardy
-        plates = [[] for _ in range((max(all_pools) + 1))]
+        plates = [[] for _ in range(max(all_pools) + 1)]
         for primer in primer_list:
             pool = int(primer[4]) - 1
             plates[pool].append(primer)
@@ -153,7 +150,7 @@ def read_bedfile(bed_path: pathlib.Path) -> tuple[list[str], list[list[str]]]:
     """
     primer_list = []
     header_list = []
-    with open(bed_path, "r") as file:
+    with open(bed_path) as file:
         for line in file.readlines():
             line = line.strip()
             # Handle the header
