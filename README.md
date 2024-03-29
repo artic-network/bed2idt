@@ -1,63 +1,61 @@
-# bed2idt 
+# `bed2idt`
 
-This command-line interface (CLI) generates IDT input files from a 7-column primer bed file.
+**Usage**:
 
-## Description
+```console
+$ bed2idt [OPTIONS] COMMAND [ARGS]...
+```
 
-The IDT Input File Generator CLI allows you to convert a primer bed file into IDT input files. IDT (Integrated DNA Technologies) is a company that provides custom DNA synthesis services. This tool automates the process of generating input files for ordering primers from IDT.
+**Options**:
 
-## Installation
+* `--version`: Shows the current bed2idt version.
+* `--install-completion`: Install completion for the current shell.
+* `--show-completion`: Show completion for the current shell, to copy it or customize the installation.
+* `--help`: Show this message and exit.
 
-#### From pip
+**Commands**:
 
-```pip instal bed2idt```
+* `plates`
+* `tubes`
 
-#### From Poetry / source
+## `bed2idt plates`
 
-```git clone https://github.com/ChrisgKent/bed2idt```
+**Usage**:
 
-```poetry install && poetry build```
+```console
+$ bed2idt plates [OPTIONS] BEDFILE
+```
 
-## Usage
+**Arguments**:
 
-To use the CLI, run the following command:
+* `BEDFILE`: The path to the bed file  [required]
 
-    bed2idt [options] [command] [command-options]
+**Options**:
 
+* `--output PATH`: The output location of the file. Defaults to output.xlsx  [default: output.xlsx]
+* `--splitby [pool|ref|none]`: Should the primers be split across differant plate  [default: pool]
+* `--fillby [rows|cols]`: How should the plate be filled  [default: cols]
+* `--plateprefix TEXT`: The prefix used in naming sheets in the excel file  [default: plate]
+* `--force / --no-force`: Override the output directory
+* `--randomise / --no-randomise`: Randomise the order of primers within a plate
+* `--help`: Show this message and exit.
 
-## Options
+## `bed2idt tubes`
 
-The CLI supports the following options:
+**Usage**:
 
--   `-b, --bedfile`: Path to the primer bed file (required).
--   `-o, --output`: The output location for the generated IDT input file(s) (default: `output.xlsx`).
--   `plate` command:
-    -   `-s, --splitby`: Specifies whether the primers should be split across more than one plate. Valid options are `pool`, `ref`, `none`, ~~`nest`~~ (default: `pool`).
-    -   `-f, --fillby`: Specifies how the plates should be filled. Valid options are `rows` or `cols` (default: `cols`).
-    -   `--plateprefix`: The prefix for the plate names
--   `tube` command:
-    -   `-s, --scale`: The concentration of the primers. Valid options are `25nm`, `100nm`, `250nm`, `1um`, `2um`, `5um`, `10um`, `4nmU`, `20nmU`, `PU`, or `25nmS` (default: `25nm`).
-    -   `-p, --purification`: The purification method for the primers. Valid options are `STD`, `PAGE`, `HPLC`, `IEHPLC`, `RNASE`, `DUALHPLC`, or `PAGEHPLC` (default: `STD`).
--   `--force`: Overrides the output directory if it already exists.
+```console
+$ bed2idt tubes [OPTIONS] BEDFILE
+```
 
-## Examples
+**Arguments**:
 
-1.  Generate 96-well plate IDT input files for a primer bed file named `primer.bed` and save/overide the output as `output.xlsx`, split by pools:
+* `BEDFILE`: The path to the bed file  [required]
 
-    ```bed2idt -b primer.bed --force plate --splitby pools```
+**Options**:
 
-2.  Generate tube IDT input files for a primer bed file named `primer.bed`, save the output as `custom_output.xlsx`, and specify a purification method:
-
-    ```bed2idt -b primer.bed -o custom_output.xlsx tube --purification PAGE```
-
-3.  Generate IDT input files for a primer bed file named `primer.bed` without splitting the primers across multiple plates:
-
-    ```bed2idt -b primer.bed plate --splitby none```
-
-4.  Generate IDT input files `primer.xlsx` for a primer.bed file named `primer.bed`, splitting the plate by pool, and filling plates by col:
-
-    ```bed2idt -b primer.bed -o primer.xlsx plate  --splitby pools --filllby cols```
-
-Note: Make sure to replace `python` with the appropriate command for running Python on your system.
-
-## 
+* `--output PATH`: The output location of the file. Defaults to output.xlsx  [default: output.xlsx]
+* `--scale [25nm|100nm|250nm|1um|5um|10um]`: The conc of the primers  [default: 25nm]
+* `--purification [STD|PAGE|HPLC|IEHPLC|RNASE|DUALHPLC|PAGEHPLC]`: The purification of the primers  [default: STD]
+* `--force / --no-force`: Override the output directory
+* `--help`: Show this message and exit.
