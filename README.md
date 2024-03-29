@@ -1,5 +1,7 @@
 # `bed2idt`
 
+[![CI](https://github.com/ChrisgKent/bed2idt/actions/workflows/pytest.yml/badge.svg)](https://github.com/ChrisgKent/bed2idt/actions/workflows/pytest.yml)
+
 **Usage**:
 
 ```console
