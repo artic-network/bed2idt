@@ -1,7 +1,7 @@
-import unittest
 import pathlib
+import unittest
 
-from bed2idt.main import chunks, append_xlsx
+from bed2idt.main import append_xlsx, chunks
 
 
 class TestFuncs(unittest.TestCase):
