@@ -5,10 +5,11 @@ import typer
 import xlsxwriter
 from typing_extensions import Annotated
 
+from bed2idt.__init__ import __version__
 from bed2idt.config import PlateFillBy, PlateSplitBy, TubePurification, TubeScale
 
 # Create the typer app
-app = typer.Typer()
+app = typer.Typer(no_args_is_help=True)
 
 
 def chunks(lst, n):
@@ -168,6 +169,21 @@ def append_xlsx(path: pathlib.Path):
     if path.suffix != ".xlsx":
         return path.with_suffix(".xlsx")
     return path
+
+
+def typer_callback_version(value: bool):
+    if value:
+        typer.echo(f"bed2idt version: {__version__}")
+        raise typer.Exit()
+
+
+@app.callback()
+def common(
+    value: Annotated[bool, typer.Option] = typer.Option(
+        False, "--version", callback=typer_callback_version
+    )
+):
+    pass
 
 
 @app.command()
