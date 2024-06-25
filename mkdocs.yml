@@ -1,0 +1,15 @@
+site_name: bed2idt
+
+repo_url: https://github.com/ChrisgKent/bed2idt
+repo_name: ChrisgKent/bed2idt
+
+site_url: https://chrisgkent.github.io/bed2idt/
+theme:
+  name: material
+
+nav:
+  - CLI: cli.md
+
+markdown_extensions:
+  - md_in_html
+  - attr_list

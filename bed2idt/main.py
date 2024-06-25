@@ -9,7 +9,7 @@ from bed2idt.__init__ import __version__
 from bed2idt.config import PlateFillBy, PlateSplitBy, TubePurification, TubeScale
 
 # Create the typer app
-app = typer.Typer(no_args_is_help=True)
+app = typer.Typer(name="bed2idt", no_args_is_help=True)
 
 
 def chunks(lst, n):
@@ -181,7 +181,7 @@ def typer_callback_version(value: bool):
 def common(
     value: Annotated[bool, typer.Option] = typer.Option(
         False, "--version", callback=typer_callback_version
-    )
+    ),
 ):
     pass
 
