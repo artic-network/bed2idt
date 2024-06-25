@@ -24,11 +24,7 @@ jobs:
           path: .cache
           restore-keys: |
             mkdocs-material-
-      - name: Install dependencies
-        uses: abatilo/actions-poetry@v2
-        with:
-          poetry-version: 1.7.1
-      - name: Install with poetry
-        run: poetry install --with docs
-      - name: Build docs
-        run: poetry shell && typer bed2idt/main.py utils docs > docs/cli.md && mkdocs gh-deploy --force
+      - run: pip install .
+      - run: pip install typer
+      - run: pip install mkdocs-material
+      - run: mkdocs gh-deploy --force
