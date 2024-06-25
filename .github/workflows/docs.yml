@@ -16,7 +16,7 @@ jobs:
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
       - uses: actions/setup-python@v5
         with:
-          python-version: 3.x
+          python-version: 3.11
       - run: echo "cache_id=$(date --utc '+%V')" >> $GITHUB_ENV
       - uses: actions/cache@v4
         with:
@@ -26,7 +26,9 @@ jobs:
             mkdocs-material-
       - name: Install dependencies
         uses: abatilo/actions-poetry@v2
+        with:
+          poetry-version: 1.7.1
       - name: Install with poetry
         run: poetry install --with docs
       - name: Build docs
-        run: typer bed2idt/main.py utils docs > docs/cli.md && mkdocs gh-deploy --force
+        run: poetry shell && typer bed2idt/main.py utils docs > docs/cli.md && mkdocs gh-deploy --force
