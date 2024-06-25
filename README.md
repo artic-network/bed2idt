@@ -2,7 +2,15 @@
 
 [![CI](https://github.com/ChrisgKent/bed2idt/actions/workflows/pytest.yml/badge.svg)](https://github.com/ChrisgKent/bed2idt/actions/workflows/pytest.yml)
 
-**Usage**:
+## Installation
+
+
+### Via pip
+```console
+$ pip install bed2idt 
+```
+
+## Usage
 
 ```console
 $ bed2idt [OPTIONS] COMMAND [ARGS]...
