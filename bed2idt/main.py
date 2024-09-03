@@ -91,7 +91,7 @@ def plates_go(
         # If only one pool complain
         if len(all_refs) <= 1:
             raise typer.BadParameter(
-                "To few referances to split by. Please use other --splitby option"
+                "To few references to split by. Please use other --splitby option"
             )
 
         plates = [[] for _ in all_refs]
@@ -202,7 +202,7 @@ def plates(
     ] = pathlib.Path("output.xlsx"),
     splitby: Annotated[
         PlateSplitBy,
-        typer.Option(help="Should the primers be split across differant plate"),
+        typer.Option(help="Should the primers be split across different plate"),
     ] = PlateSplitBy.POOL.value,  # type: ignore
     fillby: Annotated[
         PlateFillBy, typer.Option(help="How should the plate be filled")
@@ -249,7 +249,7 @@ def tubes(
         ),
     ] = pathlib.Path("output.xlsx"),
     scale: Annotated[
-        TubeScale, typer.Option(help="The conc of the primers")
+        TubeScale, typer.Option(help="The concentration of the primers")
     ] = TubeScale.NM25.value,  # type: ignore
     purification: Annotated[
         TubePurification, typer.Option(help="The purification of the primers")
