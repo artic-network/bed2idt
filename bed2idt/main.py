@@ -9,7 +9,9 @@ from bed2idt.__init__ import __version__
 from bed2idt.config import PlateFillBy, PlateSplitBy, TubePurification, TubeScale
 
 # Create the typer app
-app = typer.Typer(name="bed2idt", no_args_is_help=True)
+app = typer.Typer(
+    name="bed2idt", no_args_is_help=True, pretty_exceptions_show_locals=False
+)
 
 
 def chunks(lst, n):
@@ -91,7 +93,7 @@ def plates_go(
         # If only one pool complain
         if len(all_refs) <= 1:
             raise typer.BadParameter(
-                "To few referances to split by. Please use other --splitby option"
+                "To few references to split by. Please use other --splitby option"
             )
 
         plates = [[] for _ in all_refs]
@@ -186,7 +188,7 @@ def common(
     pass
 
 
-@app.command()
+@app.command(no_args_is_help=True)
 def plates(
     bedfile: Annotated[
         pathlib.Path,
@@ -198,11 +200,12 @@ def plates(
             help="The output location of the file. Defaults to output.xlsx",
             writable=True,
             callback=append_xlsx,
+            dir_okay=False,
         ),
     ] = pathlib.Path("output.xlsx"),
     splitby: Annotated[
         PlateSplitBy,
-        typer.Option(help="Should the primers be split across differant plate"),
+        typer.Option(help="Should the primers be split across different plate"),
     ] = PlateSplitBy.POOL.value,  # type: ignore
     fillby: Annotated[
         PlateFillBy, typer.Option(help="How should the plate be filled")
@@ -235,7 +238,7 @@ def plates(
     plates_go(primer_list, workbook, splitby, fillby, plateprefix, randomise)
 
 
-@app.command()
+@app.command(no_args_is_help=True)
 def tubes(
     bedfile: Annotated[
         pathlib.Path, typer.Argument(help="The path to the bed file", readable=True)
@@ -246,10 +249,11 @@ def tubes(
             help="The output location of the file. Defaults to output.xlsx",
             writable=True,
             callback=append_xlsx,
+            dir_okay=False,
         ),
     ] = pathlib.Path("output.xlsx"),
     scale: Annotated[
-        TubeScale, typer.Option(help="The conc of the primers")
+        TubeScale, typer.Option(help="The concentration of the primers")
     ] = TubeScale.NM25.value,  # type: ignore
     purification: Annotated[
         TubePurification, typer.Option(help="The purification of the primers")
