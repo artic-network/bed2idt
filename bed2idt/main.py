@@ -9,7 +9,9 @@ from bed2idt.__init__ import __version__
 from bed2idt.config import PlateFillBy, PlateSplitBy, TubePurification, TubeScale
 
 # Create the typer app
-app = typer.Typer(name="bed2idt", no_args_is_help=True)
+app = typer.Typer(
+    name="bed2idt", no_args_is_help=True, pretty_exceptions_show_locals=False
+)
 
 
 def chunks(lst, n):
