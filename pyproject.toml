@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "bed2idt"
-version = "1.2.0"
+version = "1.2.1"
 description = "Converts primer.bed files to IDT ordering templates"
 authors = ["ChrisKent <chrisgkent@gmail.com>"]
 license = "CC-BY-SA-4.0"

@@ -186,7 +186,7 @@ def common(
     pass
 
 
-@app.command()
+@app.command(no_args_is_help=True)
 def plates(
     bedfile: Annotated[
         pathlib.Path,
@@ -198,6 +198,7 @@ def plates(
             help="The output location of the file. Defaults to output.xlsx",
             writable=True,
             callback=append_xlsx,
+            dir_okay=False,
         ),
     ] = pathlib.Path("output.xlsx"),
     splitby: Annotated[
@@ -235,7 +236,7 @@ def plates(
     plates_go(primer_list, workbook, splitby, fillby, plateprefix, randomise)
 
 
-@app.command()
+@app.command(no_args_is_help=True)
 def tubes(
     bedfile: Annotated[
         pathlib.Path, typer.Argument(help="The path to the bed file", readable=True)
@@ -246,6 +247,7 @@ def tubes(
             help="The output location of the file. Defaults to output.xlsx",
             writable=True,
             callback=append_xlsx,
+            dir_okay=False,
         ),
     ] = pathlib.Path("output.xlsx"),
     scale: Annotated[
