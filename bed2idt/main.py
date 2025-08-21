@@ -6,6 +6,7 @@
 
 import pathlib
 import random
+from importlib.metadata import version
 
 import typer
 import xlsxwriter
@@ -13,7 +14,6 @@ from primalbedtools.bedfiles import BedLine, group_by_chrom, group_by_pool
 from primalbedtools.scheme import Scheme
 from typing_extensions import Annotated
 
-from bed2idt.__init__ import __version__
 from bed2idt.config import (
     PlateFillBy,
     PlateSize,
@@ -21,6 +21,7 @@ from bed2idt.config import (
     TubePurification,
     TubeScale,
 )
+
 
 # Create the typer app
 app = typer.Typer(
@@ -192,7 +193,7 @@ def append_xlsx(path: pathlib.Path):
 
 def typer_callback_version(value: bool):
     if value:
-        typer.echo(f"bed2idt version: {__version__}")
+        typer.echo(f"bed2idt version: {version("bed2idt")}")
         raise typer.Exit()
 
 
@@ -211,6 +212,13 @@ def plates(
         pathlib.Path,
         typer.Argument(help="The path to the bed file", readable=True),
     ],
+    plateprefix: Annotated[
+        str,
+        typer.Option(
+            help="The prefix used in naming sheets in the excel file",
+            show_default=False,
+        ),
+    ],
     output: Annotated[
         pathlib.Path,
         typer.Option(
@@ -227,9 +235,6 @@ def plates(
     fillby: Annotated[
         PlateFillBy, typer.Option(help="How should the plate be filled")
     ] = PlateFillBy.COLS.value,  # type: ignore
-    plateprefix: Annotated[
-        str, typer.Option(help="The prefix used in naming sheets in the excel file")
-    ] = "plate",
     force: Annotated[
         bool, typer.Option(help="Override the output directory", show_default=False)
     ] = False,
