@@ -33,7 +33,7 @@ $ bed2idt plates [OPTIONS] BEDFILE
 **Options**:
 
 * `--output FILE`: The output location of the file. Defaults to output.xlsx  [default: output.xlsx]
-* `--splitby [pool|ref|ref+pool|none]`: Should the primers be split across different plate  [default: pool]
+* `--splitby [pool|ref|ref_pool|none]`: Should the primers be split across different plate  [default: pool]
 * `--fillby [rows|cols]`: How should the plate be filled  [default: cols]
 * `--plateprefix TEXT`: The prefix used in naming sheets in the excel file  [default: plate]
 * `--force / --no-force`: Override the output directory

@@ -14,7 +14,7 @@ class PlateSize(Enum):
 class PlateSplitBy(Enum):
     POOL = "pool"
     REF = "ref"
-    REF_POOL = "ref+pool"
+    REF_POOL = "ref_pool"
     NONE = "none"
 
 
