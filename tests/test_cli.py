@@ -1,8 +1,8 @@
 import pathlib
 
 from typer.testing import CliRunner
+from importlib.metadata import version
 
-from bed2idt.__init__ import __version__
 from bed2idt.main import app
 
 runner = CliRunner()
@@ -23,7 +23,7 @@ if NON_EXISTING_OUTPUT.exists():
 def test_app_version():
     result = runner.invoke(app, ["--version"])
     assert result.exit_code == 0
-    assert __version__ in result.stdout
+    assert version("bed2idt") in result.stdout
 
 
 def test_plate_generate_exists():
@@ -31,6 +31,8 @@ def test_plate_generate_exists():
         app,
         [
             "plates",
+            "--plateprefix",
+            "test",
             "--output",
             str(EXISTING_OUTPUT.absolute()),
             str(BEDFILE_INPUT.absolute()),
@@ -44,6 +46,8 @@ def test_plate_generate_okay():
         app,
         [
             "plates",
+            "--plateprefix",
+            "test",
             "--output",
             str(NON_EXISTING_OUTPUT.absolute()),
             str(BEDFILE_INPUT.absolute()),
