@@ -193,7 +193,7 @@ def append_xlsx(path: pathlib.Path):
 
 def typer_callback_version(value: bool):
     if value:
-        typer.echo(f"bed2idt version: {version("bed2idt")}")
+        typer.echo(f"bed2idt version: {version('bed2idt')}")
         raise typer.Exit()
 
 
