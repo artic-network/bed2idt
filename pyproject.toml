@@ -5,11 +5,11 @@ description = "Converts primer.bed files to IDT ordering templates"
 authors = [{ name = "ChrisKent", email = "chrisgkent@gmail.com" }]
 requires-python = ">=3.10"
 readme = "README.md"
-license = "CC-BY-SA-4.0"
+license = "BSD-3-Clause"
 dependencies = [
     "xlsxwriter>=3.1.2,<4",
-    "typer[all]>=0.12.2,<0.13",
-    "primalbedtools>=0.10.1,<0.11",
+    "typer>=0.16.1",
+    "primalbedtools>=0.10.1",
 ]
 
 [project.scripts]

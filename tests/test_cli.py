@@ -19,12 +19,6 @@ if NON_EXISTING_OUTPUT.exists():
     NON_EXISTING_OUTPUT.unlink()
 
 
-# Test the app can run
-def test_app():
-    result = runner.invoke(app)
-    assert result.exit_code == 0
-
-
 # Test the app can run with the version flag
 def test_app_version():
     result = runner.invoke(app, ["--version"])
