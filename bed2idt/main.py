@@ -1,17 +1,54 @@
+# Copyright (c) 2025, Chris Kent
+# All rights reserved.
+#
+# This source code is licensed under the BSD-3-Clause license found in the
+# LICENSE file in the root directory of this source tree.
+
 import pathlib
-from random import shuffle
+import random
+from importlib.metadata import version
 
 import typer
 import xlsxwriter
+from primalbedtools.bedfiles import BedLine, group_by_chrom, group_by_pool
+from primalbedtools.scheme import Scheme
 from typing_extensions import Annotated
 
-from bed2idt.__init__ import __version__
-from bed2idt.config import PlateFillBy, PlateSplitBy, TubePurification, TubeScale
+from bed2idt.config import (
+    PlateFillBy,
+    PlateSize,
+    PlateSplitBy,
+    TubePurification,
+    TubeScale,
+)
+
 
 # Create the typer app
 app = typer.Typer(
     name="bed2idt", no_args_is_help=True, pretty_exceptions_show_locals=False
 )
+
+SEED = 2025_08_20
+
+plate_letters = [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "I",
+    "J",
+    "K",
+    "L",
+    "M",
+    "N",
+    "O",
+    "P",
+]
+plate_numbers = [*range(1, 25)]
 
 
 def chunks(lst, n):
@@ -20,11 +57,21 @@ def chunks(lst, n):
         yield lst[i : i + n]
 
 
-def create_plate(primer_list: list[list], workbook, sheet_name: str, by_rows: bool):
+def create_plates(
+    primer_list: list[list[BedLine]],
+    workbook,
+    sheet_name: str,
+    by_rows: bool,
+    size: PlateSize,
+):
     for index, primer_sublist in enumerate(primer_list):
         # Create all the indexes in a generator
-        letters = ["A", "B", "C", "D", "E", "F", "G", "H"]
-        numb = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+        if size == PlateSize.WELL96:
+            letters = plate_letters[:8]
+            numb = plate_numbers[:12]
+        else:
+            letters = plate_letters[:16]
+            numb = plate_numbers[:24]
 
         # Ensure the plate is filled up correctly
         if by_rows:
@@ -39,7 +86,10 @@ def create_plate(primer_list: list[list], workbook, sheet_name: str, by_rows: bo
         for index, head in enumerate(headings):
             worksheet.write(0, index, head)
         row = 1
-        content = [("".join(i), p[3], p[6]) for i, p in zip(indexes, primer_sublist)]
+        content = [
+            ("".join(i), p.primername, p.sequence)
+            for i, p in zip(indexes, primer_sublist)
+        ]
 
         for primer in content:
             for col, data in enumerate(primer):
@@ -48,78 +98,66 @@ def create_plate(primer_list: list[list], workbook, sheet_name: str, by_rows: bo
 
 
 def plates_go(
-    primer_list,
+    scheme: Scheme,
     workbook,
     splitby: PlateSplitBy,
     fillby: PlateFillBy,
     plateprefix: str,
     randomise: bool,
+    size: PlateSize,
 ):
     if randomise:
-        shuffle(primer_list)
+        random.Random(SEED).shuffle(scheme.bedlines)
+
+    splits: dict[str, list[BedLine]] = dict()
 
     # Ensure primers are split by pool
     if splitby == PlateSplitBy.POOL:
-        # Make sure the pools are zero indexed
-        all_pools = list({int(x[4]) - 1 for x in primer_list})
-        all_pools.sort()
-
-        # If only one pool complain
-        if len(all_pools) <= 1:
-            raise typer.BadParameter(
-                "To few pools to split by. Please use other --splitby option"
-            )
-
-        # Ensure all pools are pos
-        for pool in all_pools:
-            if pool < 0:
-                raise typer.BadParameter("Please ensure all pools are 1-indexed")
-
-        # If people do werid things with pools this should be pretty hardy
-        plates = [[] for _ in range(max(all_pools) + 1)]
-        for primer in primer_list:
-            pool = int(primer[4]) - 1
-            plates[pool].append(primer)
+        splits = {str(k): v for k, v in group_by_pool(scheme.bedlines).items()}
 
     # Don't Split plates by primers
     elif splitby == PlateSplitBy.NONE:
-        plates = [primer_list]
+        splits = {"": scheme.bedlines}
 
     # Split primers by the ref genome
     elif splitby == PlateSplitBy.REF:
-        all_refs = {x[0] for x in primer_list}
-        ref_dict = {x: i for i, x in enumerate(all_refs)}
+        splits = group_by_chrom(scheme.bedlines)
 
-        # If only one pool complain
-        if len(all_refs) <= 1:
-            raise typer.BadParameter(
-                "To few references to split by. Please use other --splitby option"
-            )
+    elif splitby == PlateSplitBy.REF_POOL:
+        ref_splits = group_by_chrom(scheme.bedlines)
 
-        plates = [[] for _ in all_refs]
-        for primer in primer_list:
-            plate = ref_dict[primer[0]]
-            plates[plate].append(primer)
+        for ref, ref_bedlines in ref_splits.items():
+            ref_pool_splits = {
+                str(k): v for k, v in group_by_pool(ref_bedlines).items()
+            }
+            for pool, ref_pool_bedlines in ref_pool_splits.items():
+                splits[f"{ref}_{pool}"] = ref_pool_bedlines
 
     else:
         raise typer.BadParameter("Please select a valid option for --splitby")
 
-    # make sure no pool are more than 96 primers
-    plates = [list(chunks(x, 96)) for x in plates]  # type: ignore
+    # make sure no pool are more than 96 or 384 primers
+    split_plates = {
+        k: list(chunks(v, 96 if size == PlateSize.WELL96 else 384))
+        for k, v in splits.items()
+    }  # type: ignore
 
-    for index, plate in enumerate(plates):
-        if plate:  # Plates can be empty so only write non-empty plates
-            create_plate(
-                plate,  # type: ignore
+    for split, plates in split_plates.items():
+        if plates:
+            create_plates(
+                plates,  # type: ignore
                 workbook,
-                sheet_name=f"{plateprefix}_{index +1}",
+                sheet_name=f"{plateprefix}_{split}" if split else f"{plateprefix}",
                 by_rows=fillby == PlateFillBy.ROWS,
+                size=size,
             )
 
     workbook.close()
 
 
-def tubes_go(primer_list, workbook, scale: TubeScale, purification: TubePurification):
+def tubes_go(
+    scheme: Scheme, workbook, scale: TubeScale, purification: TubePurification
+):
     worksheet = workbook.add_worksheet()
     headings = ["Name", "Sequence", "Scale", "Purification"]
 
@@ -129,7 +167,10 @@ def tubes_go(primer_list, workbook, scale: TubeScale, purification: TubePurifica
     row = 1
 
     # Generate the things to write
-    content = [(x[3], x[6], scale.value, purification.value) for x in primer_list]
+    content = [
+        (x.primername, x.sequence, scale.value, purification.value)
+        for x in scheme.bedlines
+    ]
 
     # Write each line
     for primer in content:
@@ -139,29 +180,6 @@ def tubes_go(primer_list, workbook, scale: TubeScale, purification: TubePurifica
         row += 1
 
     workbook.close()
-
-
-def read_bedfile(bed_path: pathlib.Path) -> tuple[list[str], list[list[str]]]:
-    """
-    Read a BED file and return the header and primer list.
-
-    Args:
-        bed_path (pathlib.Path): The path to the BED file.
-
-    Returns:
-        tuple[list, list]: A tuple containing the header list and primer list.
-    """
-    primer_list = []
-    header_list = []
-    with open(bed_path) as file:
-        for line in file.readlines():
-            line = line.strip()
-            # Handle the header
-            if line.startswith("#"):
-                header_list.append(line)
-                continue
-            primer_list.append(line.split())
-    return header_list, primer_list
 
 
 def append_xlsx(path: pathlib.Path):
@@ -175,7 +193,7 @@ def append_xlsx(path: pathlib.Path):
 
 def typer_callback_version(value: bool):
     if value:
-        typer.echo(f"bed2idt version: {__version__}")
+        typer.echo(f"bed2idt version: {version('bed2idt')}")
         raise typer.Exit()
 
 
@@ -194,6 +212,13 @@ def plates(
         pathlib.Path,
         typer.Argument(help="The path to the bed file", readable=True),
     ],
+    plateprefix: Annotated[
+        str,
+        typer.Option(
+            help="The prefix used in naming sheets in the excel file",
+            show_default=False,
+        ),
+    ],
     output: Annotated[
         pathlib.Path,
         typer.Option(
@@ -210,18 +235,17 @@ def plates(
     fillby: Annotated[
         PlateFillBy, typer.Option(help="How should the plate be filled")
     ] = PlateFillBy.COLS.value,  # type: ignore
-    plateprefix: Annotated[
-        str, typer.Option(help="The prefix used in naming sheets in the excel file")
-    ] = "plate",
     force: Annotated[
         bool, typer.Option(help="Override the output directory", show_default=False)
     ] = False,
     randomise: Annotated[
         bool,
-        typer.Option(
-            help="Randomise the order of primers within a plate", show_default=False
-        ),
+        typer.Option(help="Randomise the order of primers within a plate"),
     ] = False,
+    platesize: Annotated[
+        PlateSize,
+        typer.Option(help="The size of the plate to use"),
+    ] = PlateSize.WELL96.value,  # type: ignore
 ):
     # Check the outpath
     if output.exists() and not force:
@@ -229,13 +253,13 @@ def plates(
             f"File exists at {output.absolute()}, add --force to overwrite"
         )
     # Read in the primers
-    header, primer_list = read_bedfile(bedfile)
+    scheme = Scheme.from_file(str(bedfile))
 
     # Create the workbook
     workbook = xlsxwriter.Workbook(output)
 
     # Create the plates
-    plates_go(primer_list, workbook, splitby, fillby, plateprefix, randomise)
+    plates_go(scheme, workbook, splitby, fillby, plateprefix, randomise, platesize)
 
 
 @app.command(no_args_is_help=True)
@@ -269,13 +293,12 @@ def tubes(
         )
 
     # Read in the primers
-    header, primer_list = read_bedfile(bedfile)
-
+    scheme = Scheme.from_file(str(bedfile))
     # Create the workbook
     workbook = xlsxwriter.Workbook(output)
 
     # Create the tubes
-    tubes_go(primer_list, workbook, scale, purification)
+    tubes_go(scheme, workbook, scale, purification)
 
 
 if __name__ == "__main__":

@@ -6,9 +6,15 @@ Please check https://eu.idtdna.com/site/order/oligoentry to confirm
 """
 
 
+class PlateSize(Enum):
+    WELL96 = "96"
+    WELL384 = "384"
+
+
 class PlateSplitBy(Enum):
     POOL = "pool"
     REF = "ref"
+    REF_POOL = "ref_pool"
     NONE = "none"
 
 
