@@ -49,6 +49,7 @@ dev = [
     { name = "ruff" },
 ]
 docs = [
+    { name = "mkdocs" },
     { name = "mkdocs-material" },
 ]
 
@@ -67,7 +68,10 @@ dev = [
     { name = "pytest", specifier = ">=7.4.3,<8" },
     { name = "ruff", specifier = ">=0.3.4,<0.4" },
 ]
-docs = [{ name = "mkdocs-material", specifier = ">=9.5.27,<10" }]
+docs = [
+    { name = "mkdocs", specifier = ">=1.6.1" },
+    { name = "mkdocs-material", specifier = ">=9.6.17,<10" },
+]
 
 [[package]]
 name = "certifi"
