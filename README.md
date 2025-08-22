@@ -1,6 +1,9 @@
+> [!NOTE]
+> This tool is not affiliated with, endorsed by, or approved by Integrated DNA Technologies (IDT)
+
 # `bed2idt`
 
-[![CI](https://github.com/ChrisgKent/bed2idt/actions/workflows/pytest.yml/badge.svg)](https://github.com/ChrisgKent/bed2idt/actions/workflows/pytest.yml)
+[![CI](https://github.com/ChrisgKent/bed2idt/actions/workflows/pytest.yml/badge.svg)](https://github.com/artic-network/bed2idt/actions/workflows/pytest.yml)
 
 ## Installation
 
